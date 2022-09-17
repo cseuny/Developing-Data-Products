@@ -1,28 +1,18 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(stats)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-
+    fit1 <- lm(Fertility ~ Agriculture, data = swiss)
+    
+    predicted <- reactive({
+        predict(fit1, newdata = data.frame(Agriculture = input$Agri))
     })
 
+    output$ferPlot <- renderPlot({
+        plot(swiss$Agriculture, swiss$Fertility, xlab = "% of agriculture", ylab = "Fertility")
+        abline(fit1, col = "red", lwd = 2)
+        points(input$Agri, predicted(), col = "red", pch = 16, cex = 2)
+    })
 })

@@ -1,0 +1,47 @@
+---
+title: "Assignment2"
+output: ioslides_presentation
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview
+
+This shiny app shows the predicted fertility based on the data of Switzerland at about 1888.
+
+
+## Used model
+
+Linear regression model is used to show the relationship between % of agriculture and fertility.
+
+```{r}
+library(stats)
+fit1 <- lm(Fertility ~ Agriculture, data = swiss)
+```
+
+```{r, eval=FALSE}
+predicted <- reactive({
+  predict(fit1, newdata = data.frame(Agriculture = input$Agri))
+})
+```
+
+
+## User input
+
+A user gives a value of % of males involved in agriculture as occupation using a slide bar.
+The value can be from 0 to 100.
+
+## Output plot
+50 is used as an input value for demonstration.
+
+```{r, echo=FALSE}
+Agri <- 50
+plot(swiss$Agriculture, swiss$Fertility, xlab = "% of agriculture", ylab = "Fertility")
+abline(fit1, col = "red", lwd = 2)
+points(Agri, predict(fit1, newdata = data.frame(Agriculture = Agri)), col = "red", pch = 16, cex = 2)
+```
+
+
